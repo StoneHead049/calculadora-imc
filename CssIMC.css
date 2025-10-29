@@ -1,0 +1,924 @@
+/* ==========================================================================
+   1. VARIABLES Y ESTILOS GLOBALES (CON MODO OSCURO INTEGRADO)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+:root {
+    /* --- MODO CLARO (POR DEFECTO) --- */
+    --fuente-principal: 'Nunito', sans-serif;
+    
+    --color-fondo: #fdf8e1; /* Amarillo crema */
+    --color-fondo-tarjeta: #ffffff; /* Blanco para tarjetas/secciones */
+    --color-texto-principal: #1b3039; /* Texto principal oscuro */
+    --color-texto-secundario: #3a435d; /* Texto secundario/etiquetas */
+    --color-fondo-encabezado: #1b3039; /* Fondo del header */
+    --color-texto-encabezado: #eceff1; /* Texto del header */
+    --color-acento: #0071ff; /* Azul */
+    --color-acento-hover: #ffbc0e; /* Dorado */
+    --color-sombra: rgba(0, 0, 0, 0.08);
+    --color-borde-input: #ddd;
+    --color-fondo-input: #f0f1f5;
+    
+    --radio-borde-pildora: 50px;
+    --radio-borde-tarjeta: 15px;
+}
+
+.modoscuro {
+    /* --- MODO OSCURO (SOBREESCRIBE LAS VARIABLES) --- */
+    --color-fondo: #070b1d; /* Fondo azul muy oscuro */
+    --color-fondo-tarjeta: #101425; /* Tarjetas/secciones azul oscuro */
+    --color-texto-principal: #eceff1; /* Texto principal claro */
+    --color-texto-secundario: #a4a5b8; /* Texto secundario gris claro */
+    --color-sombra: rgba(0, 0, 0, 0.2);
+    --color-borde-input: #3a435d;
+    --color-fondo-input: #19213e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    background-color: var(--color-fondo);
+    color: var(--color-texto-principal);
+    padding-top: 85px;
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s; /* Transición suave */
+}
+
+/* ==========================================================================
+   2. BARRA DE NAVEGACIÓN (HEADER)
+   ========================================================================== */
+
+.encabezado {
+    background-color: var(--color-fondo-encabezado);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 85px;
+    padding: 5px 10%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 10px var(--color-sombra);
+}
+
+.encabezado .enlaces-nav {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.encabezado .enlaces-nav a {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--color-texto-encabezado); 
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radio-borde-pildora);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.encabezado .enlaces-nav a:hover {
+    color: var(--color-acento-hover);
+    transform: translateY(-2px);
+}
+
+.encabezado .enlaces-nav a.active {
+    color: var(--color-fondo-tarjeta); /* Blanco */
+    background-color: transparent;
+    border-color: var(--color-texto-encabezado); /* Borde blanco */
+}
+
+/* --- NUEVO: Estado activo de enlaces en MODO OSCURO --- */
+.modoscuro .encabezado .enlaces-nav a.active {
+    background-color: var(--color-texto-encabezado); /* Fondo beige/blanco */
+    color: var(--color-fondo-encabezado); /* Texto oscuro, creando contraste */
+    border-color: var(--color-texto-encabezado);
+}
+
+/* ==========================================================================
+   3. BOTONES DEL HEADER (TEMA Y CUENTA)
+   ========================================================================== */
+
+.acciones-encabezado {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#interruptor-tema {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid var(--color-texto-secundario);
+    color: var(--color-texto-encabezado);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+#interruptor-tema:hover {
+    border-color: var(--color-texto-encabezado);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#interruptor-tema svg {
+    fill: var(--color-texto-encabezado);
+    width: 22px;
+    height: 22px;
+}
+
+/* Lógica para mostrar/ocultar el ícono correcto */
+#interruptor-tema svg:last-child { display: none; }
+.modoscuro #interruptor-tema svg:first-child { display: none; }
+.modoscuro #interruptor-tema svg:last-child { display: block; }
+
+
+.boton-cuenta {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-texto-principal);
+    background-color: var(--color-fondo-tarjeta);
+    padding: 9px 25px;
+    border: 2px solid transparent;
+    border-radius: var(--radio-borde-pildora);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 20px;
+}
+
+.boton-cuenta:hover {
+    background-color: var(--color-acento-hover);
+    border-color: var(--color-acento-hover);
+    transform: scale(1.05);
+}
+
+.boton-cuenta.active {
+    background-color: transparent;
+    color: var(--color-texto-encabezado);
+    border-color: var(--color-texto-encabezado);
+}
+
+.icono-cuenta {
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-texto-principal);
+    fill: none;
+    transition: stroke 0.3s ease;
+}
+
+.boton-cuenta:hover .icono-cuenta {
+    stroke: var(--color-fondo-encabezado);
+}
+
+.boton-cuenta.active .icono-cuenta {
+    stroke: var(--color-texto-encabezado);
+}
+
+/* ==========================================================================
+   4. ESTILOS DEL CONTENIDO PRINCIPAL
+   ========================================================================== */
+
+main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+section {
+    background-color: var(--color-fondo-tarjeta);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radio-borde-tarjeta);
+    box-shadow: 0 4px 15px var(--color-sombra);
+    transition: background-color 0.3s;
+}
+
+h1, h2, h3 {
+    color: var(--color-texto-principal);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+    color: var(--color-texto-secundario);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   5. ESTILOS PARA LA SELECCIÓN DE GÉNERO
+   ========================================================================== */
+
+#seleccion-genero {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+#seleccion-genero > div {
+    background-color: var(--color-fondo-input);
+    padding: 1.5rem;
+    border-radius: var(--radio-borde-tarjeta);
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 150px;
+}
+
+#seleccion-genero > div:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+#seleccion-genero > div span {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+#seleccion-genero > div p {
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-texto-principal);
+    font-size: 1rem;
+}
+
+#seleccion-genero .selected {
+    background-color: var(--color-fondo-tarjeta);
+    border-color: var(--color-acento); /* Borde azul */
+    box-shadow: 0 8px 25px rgba(0, 113, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+#seleccion-genero .selected p {
+    color: var(--color-acento);
+}
+
+/* ==========================================================================
+   6. ESTILOS PARA EL INTERRUPTOR DE UNIDADES
+   ========================================================================== */
+
+.contenedor-interruptor-unidades {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.contenedor-interruptor-unidades input[type="checkbox"] {
+    display: none;
+}
+
+.contenedor-interruptor-unidades label {
+    cursor: pointer;
+    width: 60px;
+    height: 30px;
+    background: var(--color-fondo-input);
+    display: block;
+    border-radius: 100px;
+    position: relative;
+    transition: background-color .2s ease;
+    order: 2; 
+}
+
+.contenedor-interruptor-unidades label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-fondo-tarjeta);
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.contenedor-interruptor-unidades input:checked + .etiqueta-metrico + label {
+    background: var(--color-acento);
+}
+
+.contenedor-interruptor-unidades input:checked + .etiqueta-metrico + label:after {
+    transform: translateX(30px);
+}
+
+.contenedor-interruptor-unidades span {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-texto-secundario);
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.etiqueta-metrico { order: 1; }
+.etiqueta-imperial { order: 3; }
+
+.contenedor-interruptor-unidades input:not(:checked) + .etiqueta-metrico {
+    opacity: 1;
+}
+
+.contenedor-interruptor-unidades input:checked ~ .etiqueta-imperial {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   7. ESTILOS PARA LOS CAMPOS DE INGRESO DE DATOS
+   ========================================================================== */
+
+#entradas-metricas, #entradas-imperiales {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+#entradas-metricas > div, #entradas-imperiales > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-texto-secundario);
+}
+
+input[type="number"] {
+    font-family: var(--fuente-principal);
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--color-borde-input);
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::placeholder {
+    color: #aaa;
+    opacity: 0.8;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-acento);
+    box-shadow: 0 0 10px rgba(0, 113, 255, 0.2);
+    background-color: var(--color-fondo-tarjeta);
+}
+
+/* ==========================================================================
+   8. ESTILOS PARA EL BOTÓN DE CALCULAR
+   ========================================================================== */
+
+.contenedor-boton-calcular {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+#boton-calcular {
+    font-family: var(--fuente-principal);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1rem 2.5rem;
+    border: none;
+    border-radius: var(--radio-borde-pildora);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+#boton-calcular:not(:disabled) {
+    background-color: var(--color-acento);
+    color: var(--color-fondo-tarjeta); /* Texto blanco */
+}
+
+#boton-calcular:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 113, 255, 0.25);
+}
+
+#boton-calcular:disabled {
+    background-color: #e0e0e0 !important;
+    color: #a0a0a0 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ==========================================================================
+   9. ESTILOS PARA LA SECCIÓN DE RESULTADOS
+   ========================================================================== */
+
+.diseño-resultados {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.columna-resultados {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Medidor de IMC */
+.contenedor-medidor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.medidor {
+    position: relative;
+    width: 250px;
+    height: 125px;
+    border-radius: 125px 125px 0 0;
+    overflow: hidden;
+    background-color: var(--color-fondo-input); /* Color base del arco */
+}
+
+.medidor:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(
+        from 180deg,
+        #3498db 0% 20%,   /* Bajo */
+        #2ecc71 20% 50%,  /* Normal */
+        #f1c40f 50% 75%,  /* Sobrepeso */
+        #e74c3c 75% 100%  /* Obeso */
+    );
+}
+
+.medidor:after {
+    content: '';
+    position: absolute;
+    background: var(--color-fondo-tarjeta);
+    width: 80%;
+    height: 160%;
+    border-radius: 50%;
+    top: 20%;
+    left: 10%;
+}
+
+.aguja-medidor {
+    position: absolute;
+    width: 4px;
+    height: 100px;
+    background: var(--color-texto-principal);
+    bottom: 0;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 5px;
+    z-index: 10;
+    transition: transform 0.8s ease-out;
+    transform: translateX(-50%) rotate(var(--rotacion-medidor, -90deg));
+}
+
+.texto-resultado-medidor {
+    text-align: center;
+    margin-top: -2.5rem;
+    z-index: 11;
+    background: var(--color-fondo-tarjeta);
+    padding: 0 1rem;
+}
+.texto-resultado-medidor span {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-texto-principal);
+}
+.texto-resultado-medidor p {
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-texto-principal);
+}
+
+/* Tabla de Resultados */
+#tabla-resultados {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#tabla-resultados th, #tabla-resultados td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde-input);
+    color: var(--color-texto-principal);
+}
+
+#tabla-resultados th {
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    font-weight: 700;
+}
+
+#tabla-resultados .resaltado {
+    background-color: #d1e7dd;
+    font-weight: bold;
+    border-left: 5px solid #0f5132;
+}
+
+.modoscuro #tabla-resultados .resaltado {
+    background-color: #27ae60;
+    color: var(--color-fondo-tarjeta);
+    border-left: 5px solid #2ecc71;
+}
+
+/* Consejos de Dieta */
+.consejos-dieta {
+    margin-top: 2rem;
+    background-color: var(--color-fondo-input); /* Fondo sutil */
+    padding: 1.5rem;
+    border-radius: var(--radio-borde-tarjeta);
+}
+
+.consejos-dieta li {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+    list-style-position: inside;
+}
+
+/* Botón de Guardar Resultado */
+.contenedor-guardar-resultado {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--color-borde-input);
+    text-align: center;
+}
+
+.boton-guardar {
+    background-color: #2ecc71;
+    color: white;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: var(--radio-borde-pildora);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.boton-guardar:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+}
+
+/* Checkbox personalizado */
+.checkbox-personalizado {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.checkbox-personalizado input {
+    display: none;
+}
+.checkbox-personalizado label {
+    cursor: pointer;
+    padding-left: 30px;
+    position: relative;
+    font-size: 0.9rem;
+    color: var(--color-texto-secundario);
+}
+.checkbox-personalizado label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background: var(--color-fondo-tarjeta);
+}
+.checkbox-personalizado input:checked + label:after {
+    content: '✔';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    color: var(--color-acento);
+    font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   10. ESTILOS PARA LA SECCIÓN DE RECURSOS
+   ========================================================================== */
+
+.subtitulo-seccion {
+    text-align: center;
+    margin-top: -1rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+    color: var(--color-texto-secundario);
+}
+
+.cuadricula-recursos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.tarjeta-recurso {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-fondo-tarjeta); /* Usaba --color-white, ahora usa variable */
+    border-radius: var(--radio-borde-tarjeta);
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.tarjeta-recurso:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-recurso .icono-recurso {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    background-color: var(--color-fondo-input); /* Usaba --base-variant */
+    margin-bottom: 1rem;
+}
+
+.tarjeta-recurso h3 {
+    margin-bottom: 0.5rem;
+    color: var(--color-texto-principal);
+}
+
+.tarjeta-recurso p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-texto-secundario);
+    flex-grow: 1;
+}
+
+.tarjeta-recurso .leer-mas {
+    margin-top: 1rem;
+    font-weight: 700;
+    color: var(--color-acento);
+    text-align: right;
+}
+
+/* ==========================================================================
+   11. ESTILOS PARA PÁGINAS DE AUTENTICACIÓN (LOGIN/REGISTER)
+   ========================================================================== */
+
+.boton-volver {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--color-acento);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.pestañas-auth {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-borde-input);
+}
+
+.pestañas-auth a {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    color: var(--color-texto-secundario);
+    border-bottom: 3px solid transparent;
+}
+
+.pestañas-auth a.active {
+    color: var(--color-texto-principal);
+    border-bottom-color: var(--color-acento);
+}
+
+.formulario-auth div {
+    margin-bottom: 1rem;
+}
+
+.formulario-auth label {
+    display: block; /* Pone la etiqueta en su propia línea */
+}
+
+/* Estilo para inputs de texto, email, password */
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    font-family: var(--fuente-principal);
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--color-borde-input);
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-principal);
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+    outline: none;
+    border-color: var(--color-acento);
+    box-shadow: 0 0 10px rgba(0, 113, 255, 0.2);
+    background-color: var(--color-fondo-tarjeta);
+}
+
+.boton-auth {
+    font-family: var(--fuente-principal);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1rem 2.5rem;
+    border: none;
+    border-radius: var(--radio-borde-pildora);
+    cursor: pointer;
+    background-color: var(--color-acento);
+    color: var(--color-fondo-tarjeta);
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.boton-auth:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 113, 255, 0.25);
+}
+
+.mensaje-error {
+    color: #e74c3c;
+    font-weight: 700;
+    display: none; /* Oculto por defecto, JS lo mostrará */
+}
+
+/* ==========================================================================
+   12. ESTILOS PARA PÁGINA DE HISTORIAL
+   ========================================================================== */
+
+#historial-nombre-usuario {
+    border-bottom: 2px solid var(--color-borde-input);
+    padding-bottom: 1rem;
+}
+
+.diseño-historial {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.columna-historial {
+    flex: 1;
+    min-width: 300px;
+    overflow-x: auto; /* Permite scroll horizontal en la tabla si es muy pequeña */
+}
+
+#tabla-historial {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tabla-historial th, #tabla-historial td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde-input);
+    color: var(--color-texto-principal);
+}
+
+#tabla-historial th {
+    background-color: var(--color-fondo-input);
+    font-weight: 700;
+}
+
+.contenedor-grafico {
+    width: 100%;
+    height: 350px; /* Altura fija para el gráfico */
+    background-color: var(--color-fondo-input);
+    border-radius: var(--radio-borde-tarjeta);
+    padding: 1rem;
+}
+
+.contenedor-boton-salir {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-borde-input);
+}
+
+#boton-cerrar-sesion {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: var(--radio-borde-pildora);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#boton-cerrar-sesion:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   13. ESTILOS PARA MODAL MOTIVACIONAL
+   ========================================================================== */
+
+.notificacion-esquina {
+    display: block; /* Siempre está en el DOM, pero oculto */
+    position: fixed;
+    bottom: 20px; 
+    right: 20px;
+    width: 90%; 
+    max-width: 350px;
+    background-color: var(--color-fondo-tarjeta);
+    padding: 2.5rem 2rem;
+    border-radius: var(--radio-borde-tarjeta);
+    box-shadow: 0 8px 25px var(--color-sombra);
+    z-index: 2000;
+    
+    /* Oculto por defecto (movido hacia afuera y transparente) */
+    opacity: 0;
+    transform: translateX(110%);
+    transition: all 0.5s ease;
+}
+
+.notificacion-esquina.visible {
+    /* El JS añade esta clase para mostrarlo */
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.boton-cerrar-notificacion {
+    position: absolute;
+    top: 10px; 
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--color-texto-secundario);
+    transition: color 0.2s;
+}
+
+.boton-cerrar-notificacion:hover {
+    color: var(--color-texto-principal);
+}
+
+.notificacion-esquina h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.notificacion-esquina p {
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--color-texto-principal);
+    line-height: 1.5;
+}
