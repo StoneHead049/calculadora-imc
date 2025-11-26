@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PROYECTO CALCULADORA DE IMC - LÓGICA (SIN GÉNERO)
+   PROYECTO CALCULADORA DE IMC - LÓGICA
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
