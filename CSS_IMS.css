@@ -331,6 +331,30 @@ input:focus, select.input_select:focus {
     position: relative;
     padding-bottom: 2rem;
 }
+
+/* Arreglo para tabla uniforme en historial */
+#tabla_historial {
+    width: 100%;
+    table-layout: fixed; /* Fuerza que todas las columnas midan lo mismo */
+    border-collapse: collapse;
+}
+
+#tabla_historial th, 
+#tabla_historial td {
+    padding: 1rem 0.5rem;
+    text-align: center; /* Centra el texto */
+    width: 25%; /* 4 columnas = 25% cada una */
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color_borde_input);
+}
+
+/* Opcional: Si quieres que la cabecera sea un poco distinta */
+#tabla_historial th {
+    background-color: var(--color_fondo_input);
+    color: var(--color_texto_principal);
+    font-weight: 800;
+}
+
 .texto_resultado_medidor span { font-size: 2.8rem; font-weight: 800; color: var(--color_texto_principal); display: block; line-height: 1; }
 .texto_resultado_medidor p { font-weight: 700; margin: 0; color: var(--color_texto_secundario); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
 /* --- OTROS --- */
