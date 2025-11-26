@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PROYECTO CALCULADORA DE IMC - LÓGICA
+   PROYECTO CALCULADORA DE IMC - LÓGICA RESTAURADA (CON GÉNERO)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,11 +56,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const lb_input = document.getElementById('lb');
         
         const valor_imc_display = document.getElementById('valor_imc');
+        // RECUPERADO: Selector de botones de género
+        const opciones_genero = document.querySelectorAll('#seleccion_genero div');
+        
         const seccion_resultados = document.getElementById('seccion_resultados');
         const boton_guardar_resultado = document.getElementById('boton_guardar_resultado');
         const checkbox_guardar_siempre = document.getElementById('guardar_siempre');
 
+        // RECUPERADO: Variable para guardar la selección
+        let genero_seleccionado = null;
         let es_imperial = false;
+
+        // --- RECUPERADO: Lógica de Clic en Género ---
+        opciones_genero.forEach(opcion => {
+            opcion.addEventListener('click', () => {
+                // Quitamos la clase 'selected' de todos
+                opciones_genero.forEach(opt => opt.classList.remove('selected'));
+                // Se la ponemos al que se hizo clic
+                opcion.classList.add('selected');
+                // Guardamos el valor (masculino/femenino/otro)
+                genero_seleccionado = opcion.getAttribute('data-genero');
+                
+                validar_entradas(); // Revisamos si ya podemos habilitar el botón calcular
+            });
+        });
 
         // Cambio de Unidades
         const cambiar_unidad = (imperial) => {
@@ -84,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn_imperial.addEventListener('click', () => cambiar_unidad(true));
         }
 
-        // Validación (YA NO PIDE GÉNERO)
+        // Validación
         const todos_los_inputs = [cm_input, kg_input, ft_input, in_input, lb_input];
         todos_los_inputs.forEach(input => {
             if (input) input.addEventListener('input', validar_entradas);
@@ -97,8 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { 
                 son_entradas_validas = (cm_input.value > 0 && kg_input.value > 0);
             }
-            // MODIFICADO: Solo valida números, ignora el género
-            boton_calcular.disabled = !son_entradas_validas;
+            
+            // RECUPERADO: Ahora el botón solo se activa si hay datos Y género seleccionado
+            boton_calcular.disabled = !(son_entradas_validas && genero_seleccionado);
             
             if (!boton_calcular.disabled) {
                 mensaje_error.textContent = '';
@@ -156,7 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 fecha: new Date().toLocaleDateString('es-ES'),
                 peso: peso_kg.toFixed(1),
                 altura: altura_cm.toFixed(0),
-                imc: imc.toFixed(1)
+                imc: imc.toFixed(1),
+                genero: genero_seleccionado // Guardamos el género de nuevo en el historial
             };
             historial_usuario.push(nuevo_registro);
             historial[usuario_logueado.email] = historial_usuario;
@@ -170,7 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
             valor_imc_display.textContent = `Tu IMC es: ${imc_formateado}`;
             resaltar_fila_resultado(imc);
             actualizar_medidor(imc, imc_formateado);
-            mostrar_consejos_dieta(imc);
+            // Pasamos el género para personalizar consejos si quisieras en el futuro
+            mostrar_consejos_dieta(imc, genero_seleccionado); 
         }
 
         function actualizar_medidor(imc, imc_formateado) {
@@ -212,20 +234,20 @@ document.addEventListener('DOMContentLoaded', () => {
             texto_resultado_medidor.querySelector('p').textContent = clasificacion;
         }
 
-        // MODIFICADO: Consejos generales (sin distinción de sexo)
         function mostrar_consejos_dieta(imc) {
+            // Consejos generales (puedes personalizarlos por género si gustas)
             const lista_consejos = document.getElementById('lista_consejos_dieta');
             lista_consejos.innerHTML = '';
             let consejos = [];
 
             if (imc < 18.5) { 
-                consejos = ["Aumenta consumo de proteínas y carbos.", "Realiza ejercicios de fuerza.", "Haz 5-6 comidas al día.", "Incluye grasas saludables (aguacate, nueces).", "Consulta a un nutricionista."];
+                consejos = ["Aumenta consumo de proteínas y carbos.", "Realiza ejercicios de fuerza.", "Haz 5-6 comidas al día.", "Incluye grasas saludables.", "Consulta a un nutricionista."];
             } else if (imc < 25) {
-                consejos = ["Mantén una dieta equilibrada.", "Hidrátate constantemente.", "Realiza 30 min de actividad física diaria.", "Prioriza alimentos integrales.", "Duerme entre 7 y 8 horas."];
+                consejos = ["Mantén una dieta equilibrada.", "Hidrátate constantemente.", "Realiza 30 min de actividad física.", "Prioriza alimentos integrales.", "Duerme 7-8 horas."];
             } else if (imc < 30) {
-                consejos = ["Controla las porciones.", "Reduce azúcares y harinas refinadas.", "Aumenta consumo de vegetales y fibra.", "Bebe agua antes de las comidas.", "Camina al menos 45 min diarios."];
+                consejos = ["Controla las porciones.", "Reduce azúcares y harinas.", "Aumenta consumo de vegetales.", "Bebe agua antes de comer.", "Camina 45 min diarios."];
             } else {
-                consejos = ["Prioriza alimentos no procesados.", "Busca apoyo profesional médico/nutricional.", "Comienza con ejercicios de bajo impacto.", "Establece metas pequeñas y realistas.", "Evita bebidas azucaradas."];
+                consejos = ["Prioriza alimentos no procesados.", "Busca apoyo médico.", "Ejercicios de bajo impacto.", "Metas pequeñas y realistas.", "Evita bebidas azucaradas."];
             }
 
             consejos.forEach(tip => {
@@ -245,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 4. SISTEMA DE AUTENTICACIÓN (MODIFICADO SIN GÉNERO) ---
+    // --- 4. SISTEMA DE AUTENTICACIÓN ---
     const formulario_registro = document.getElementById('formulario_registro');
     if (formulario_registro) {
         formulario_registro.addEventListener('submit', (e) => {
@@ -267,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mensaje_error.style.display = 'block';
                 return;
             }
-            // YA NO GUARDAMOS GÉNERO
+            
             usuarios[email] = { nombre: nombre_usuario, password: password };
             localStorage.setItem('usuarios_imc', JSON.stringify(usuarios));
             
