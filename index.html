@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC | Salud y Bienestar</title>
+
+    <!-- 
+        VINCULACIÓN DE ARCHIVOS:
+        - defer: Carga el script al final para no bloquear la visualización.
+        - JS_IMS.js: Contiene la lógica (cálculos, modo oscuro, localStorage).
+        - CSS_IMS.css: Contiene los estilos visuales.
+    -->
+    <script src="JS_IMS.js" defer></script>
+    <link rel="stylesheet" href="CSS_IMS.css">
+</head>
+<body>
+
+<!-- ENCABEZADO: Navegación superior -->
+<header class="encabezado">
+    <nav>
+        <ul class="enlaces_nav">
+            <li><a href="#calculadora_seccion">Calculadora</a></li>
+            <li><a href="#recursos_seccion">Recursos</a></li>
+        </ul>
+    </nav>
+
+    <div class="acciones_encabezado">
+        <!-- Botón de Tema (Sol/Luna) -->
+        <button id="interruptor_tema" title="Cambiar tema" aria-label="Cambiar tema">
+            <!-- Icono Luna (Visible en modo oscuro) -->
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+            <!-- Icono Sol (Visible en modo claro) -->
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+            <span>Cambio de tema</span>
+        </button>
+        
+        <!-- Botón de Cuenta -->
+        <a href="inicio_de_sesion.html" id="enlace_cuenta" class="boton_cuenta">
+            <svg class="icono_cuenta" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Cuenta</span>
+        </a>
+    </div>
+</header>
+
+<main>
+    <!-- SECCIÓN INTRODUCCIÓN: Texto informativo -->
+    <section>
+        <h1>¿Qué es el Índice de Masa Corporal?</h1>
+        <p>El Índice de Masa Corporal (IMC) es un indicador simple que relaciona tu peso con tu estatura. Te ayuda a saber si tu peso es saludable y a identificar posibles riesgos para tu salud.</p>
+        <h2>¿Por qué es importante conocerlo?</h2>
+        <p>Conocer tu IMC es el primer paso para tomar decisiones informadas sobre tu estilo de vida. Actúa como una herramienta de prevención temprana contra condiciones como el bajo peso, el sobrepeso y la obesidad.</p>
+    </section>
+
+    <!-- SECCIÓN CALCULADORA: Donde ocurre la interacción principal -->
+    <section id="calculadora_seccion">
+        <h2>Calcula tu IMC</h2>
+
+        <!-- Paso 1: Género -->
+        <div>
+            <h3>1.- Elige tu sexo</h3>
+            <div id="seleccion_genero">
+                <!-- 'data-genero' es un atributo personalizado que el JS lee para saber cuál se eligió -->
+                <div data-genero="masculino">
+                    <span>♂️</span>
+                    <p>Masculino</p>
+                </div>
+                <div data-genero="femenino">
+                    <span>♀️</span>
+                    <p>Femenino</p>
+                </div>
+                <div data-genero="otro">
+                    <span>👤</span>
+                    <p>Prefiero no decirlo</p>
+                </div>
+            </div>
+            <!-- Texto pequeño para cambiar género por defecto (se muestra si hay preferencia guardada y login) -->
+            <a href="#" id="texto_cambiar_genero_defecto" style="display: none; font-size: 0.8rem; color: var(--color_texto_secundario); margin-top: 10px; text-align: center; text-decoration: underline; display: block; width: 100%;">
+                ¿Deseas cambiar tu género por defecto?
+            </a>
+        </div>
+
+        <!-- Paso 2: Unidades (Métrico vs Imperial) -->
+        <div>
+            <h3>2.- Selecciona las unidades</h3>
+            <div class="contenedor_botones_unidades">
+                <button id="btn_metrico" class="boton_unidad activo">Métrico (kg, cm)</button>
+                <button id="btn_imperial" class="boton_unidad">Inglés (lb, ft, in)</button>
+            </div>
+            <!-- Input oculto para compatibilidad interna si fuera necesario -->
+            <input type="checkbox" id="interruptor_unidades_checkbox" style="display:none;"> 
+        </div>
+
+        <!-- Paso 3: Inputs (El JS muestra/oculta los divs según la unidad) -->
+        <div>
+            <h3>3.- Ingresa tus datos</h3>
+            
+            <!-- Grupo Métrico -->
+            <div id="entradas_metricas">
+                <div>
+                    <label for="cm">Estatura (en centímetros)</label>
+                    <input type="number" id="cm" placeholder="Ej: 175">
+                </div>
+                <div>
+                    <label for="kg">Peso (en kilogramos)</label>
+                    <input type="number" id="kg" placeholder="Ej: 70">
+                </div>
+            </div>
+
+            <!-- Grupo Imperial (Oculto por defecto con style="display: none") -->
+            <div id="entradas_imperiales" style="display: none;">
+                <div>
+                    <label for="ft">Estatura (pies)</label>
+                    <input type="number" id="ft" placeholder="Ej: 5">
+                </div>
+                <div>
+                    <label for="in">(pulgadas)</label>
+                    <input type="number" id="in" placeholder="Ej: 9">
+                </div>
+                <div>
+                    <label for="lb">Peso (libras)</label>
+                    <input type="number" id="lb" placeholder="Ej: 154">
+                </div>
+            </div>
+            <p id="mensaje_error"></p>
+        </div>
+        
+        <div class="contenedor_boton_calcular">
+            <button id="boton_calcular" disabled>
+                Calcular IMC
+            </button>
+        </div>
+        
+    </section>
+
+    <!-- SECCIÓN RESULTADOS: Se muestra después de calcular -->
+    <section id="seccion_resultados">
+        <h2>Tus Resultados</h2>
+
+        <div class="diseno_resultados">
+
+            <!-- Columna Izquierda: Gráfico Visual -->
+            <div class="columna_resultados">
+                <div class="contenedor_medidor">
+                    <div class="medidor">
+                        <!-- La aguja rota con CSS variable controlada por JS -->
+                        <div class="aguja_medidor"></div>
+                    </div>
+                    <div id="texto_resultado_medidor" class="texto_resultado_medidor">
+                        <span>--</span>
+                        <p>Calcula tu IMC</p>
+                    </div>
+                </div>
+
+                <div class="consejos_dieta">
+                    <h3>Características de una Dieta Sana</h3>
+                    <ul id="lista_consejos_dieta"></ul> <!-- JS llena esto dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Tabla y Botones -->
+            <div class="columna_resultados">
+                <h3 id="valor_imc">Tu IMC es: --</h3>
+                <table id="tabla_resultados">
+                    <thead>
+                        <tr><th>Clasificación</th><th>Rango de IMC</th></tr>
+                    </thead>
+                    <tbody>
+                        <!-- IDs usados por JS para resaltar la fila correcta -->
+                        <tr id="resultado_bajo"><td>Bajo Peso</td><td>&lt; 18.5</td></tr>
+                        <tr id="resultado_normal"><td>Peso Normal</td><td>18.5 – 24.9</td></tr>
+                        <tr id="resultado_sobrepeso"><td>Sobrepeso</td><td>25.0 – 29.9</td></tr>
+                        <tr id="resultado_obeso"><td>Obesidad</td><td>≥ 30.0</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="contenedor_guardar_resultado">
+                    <button id="boton_guardar_resultado" class="boton_guardar">Guardar Resultado</button>
+                    <div class="checkbox_personalizado">
+                        <input type="checkbox" id="guardar_siempre">
+                        <label for="guardar_siempre">Siempre guardar mis resultados</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN RECURSOS: Tarjetas informativas -->
+    <section id="recursos_seccion">
+        <h2>Recursos Adicionales</h2>
+        <p class="subtitulo_seccion">Información resumida y enfocada en tus necesidades.</p>
+
+        <div class="cuadricula_recursos">
+            <a href="recurso_nutricion.html" class="tarjeta_recurso">
+                <div class="icono_recurso">🥦</div>
+                <h3>Guía de Nutrición Básica</h3>
+                <p>Lo esencial sobre macronutrientes y cómo armar un plato saludable.</p>
+                <span class="leer_mas">Leer guía →</span>
+            </a>
+
+            <a href="recurso_ejercicio.html" class="tarjeta_recurso">
+                <div class="icono_recurso">💪</div>
+                <h3>Rutinas de Ejercicio</h3>
+                <p>Ejercicios simples para hacer en casa sin equipo especial.</p>
+                <span class="leer_mas">Ver rutinas →</span>
+            </a>
+
+            <a href="recurso_mitos.html" class="tarjeta_recurso">
+                <div class="icono_recurso">🤔</div>
+                <h3>Mitos sobre Dietas</h3>
+                <p>La verdad sobre los carbohidratos, las grasas y las dietas de moda.</p>
+                <span class="leer_mas">Descubrir verdad →</span>
+            </a>
+        </div>
+    </section>
+</main>
+        
+<footer>
+    <div>
+        <p>Proyecto Interacción Humano-Computadora. Calculadora IMC</p>
+    </div>
+</footer>
+
+</body>
+</html>

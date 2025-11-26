@@ -1,0 +1,383 @@
+/* ==========================================================================
+   HOJA DE ESTILOS - CALCULADORA IMC (VERSIÓN FINAL)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+:root {
+    --fuente_principal: 'Nunito', sans-serif;
+    --color_fondo: #fdf8e1; 
+    --color_fondo_tarjeta: #ffffff; 
+    --color_texto_principal: #1b3039; 
+    --color_texto_secundario: #3a435d; 
+    --color_fondo_encabezado: #1b3039; 
+    --color_texto_encabezado: #eceff1; 
+    --color_acento: #0071ff; 
+    --color_acento_hover: #ffbc0e; 
+    --color_sombra: rgba(0, 0, 0, 0.08);
+    --color_borde_input: #ddd;
+    --color_fondo_input: #f0f1f5;
+    --radio_borde_pildora: 50px;
+    --radio_borde_tarjeta: 15px;
+}
+
+.modo_oscuro {
+    --color_fondo: #070b1d; 
+    --color_fondo_tarjeta: #101425; 
+    --color_texto_principal: #eceff1; 
+    --color_texto_secundario: #a4a5b8; 
+    --color_sombra: rgba(0, 0, 0, 0.2);
+    --color_borde_input: #3a435d;
+    --color_fondo_input: #19213e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+    font-family: var(--fuente_principal);
+    background-color: var(--color_fondo);
+    color: var(--color_texto_principal);
+    padding-top: 85px;
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- ENCABEZADO --- */
+.encabezado {
+    background-color: var(--color_fondo_encabezado);
+    display: flex; justify-content: space-between; align-items: center;
+    height: 85px; padding: 5px 10%;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    box-shadow: 0 4px 10px var(--color_sombra);
+}
+
+.enlaces_nav { list-style: none; display: flex; gap: 1.5rem; }
+.enlaces_nav a {
+    font-weight: 700; font-size: 1.3rem; color: var(--color_texto_encabezado);
+    text-decoration: none; padding: 0.5rem 1rem;
+    border-radius: var(--radio_borde_pildora); border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+.enlaces_nav a:hover { color: var(--color_acento_hover); transform: translateY(-2px); }
+.modo_oscuro .enlaces_nav a.active {
+    background-color: var(--color_texto_encabezado); color: var(--color_fondo_encabezado);
+    border-color: var(--color_texto_encabezado);
+}
+
+/* --- BOTONES --- */
+.acciones_encabezado { display: flex; align-items: center; gap: 1rem; }
+#interruptor_tema {
+    /* Quitamos el ancho fijo y dejamos que se adapte al contenido */
+    width: auto; 
+    height: 40px; 
+    
+    /* Agregamos padding lateral para que el texto respire */
+    padding: 0 20px;
+    
+    /* Cambiamos el radio para que sea tipo "píldora" en vez de círculo perfecto */
+    border-radius: 50px; 
+    
+    background-color: transparent;
+    border: 2px solid var(--color_texto_secundario);
+    color: var(--color_texto_encabezado);
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* IMPORTANTE: Esto separa el ícono del texto */
+    gap: 10px; 
+    
+    transition: all 0.3s ease;
+    
+    /* Aseguramos que el texto tenga buen tamaño y peso */
+    font-family: var(--fuente_principal);
+    font-weight: 700;
+    font-size: 1rem;
+}
+/* --- LÓGICA DE VISIBILIDAD DE ICONOS --- */
+
+/* Por defecto (Modo Claro): Ocultamos el Sol (el segundo SVG) */
+#interruptor_tema svg:nth-of-type(2) {
+    display: none;
+}
+
+/* En Modo Oscuro: Ocultamos la Luna (el primer SVG) */
+.modo_oscuro #interruptor_tema svg:nth-of-type(1) {
+    display: none;
+}
+
+/* En Modo Oscuro: Mostramos el Sol (el segundo SVG) */
+.modo_oscuro #interruptor_tema svg:nth-of-type(2) {
+    display: block;
+}
+
+#interruptor_tema:hover { border-color: var(--color_texto_encabezado); background-color: rgba(255, 255, 255, 0.1); }
+#interruptor_tema svg { fill: var(--color_texto_encabezado); }
+#interruptor_tema svg:last-child { display: none; }
+.modo_oscuro #interruptor_tema svg:first-child { display: none; }
+.modo_oscuro #interruptor_tema svg:last-child { display: block; }
+
+.boton_cuenta {
+    display: flex; align-items: center; text-decoration: none;
+    font-weight: 700; font-size: 1.1rem; color: var(--color_texto_principal);
+    background-color: var(--color_fondo_tarjeta); padding: 9px 25px;
+    border: 2px solid transparent; border-radius: var(--radio_borde_pildora);
+    cursor: pointer; transition: all 0.3s ease; margin-left: 20px;
+}
+.boton_cuenta:hover { background-color: var(--color_acento_hover); border-color: var(--color_acento_hover); transform: scale(1.05); }
+.boton_cuenta.active { background-color: transparent; color: var(--color_texto_encabezado); border-color: var(--color_texto_encabezado); }
+
+.icono_cuenta { margin-right: 8px; stroke: var(--color_texto_principal); fill: none; transition: stroke 0.3s ease; }
+.boton_cuenta:hover .icono_cuenta { stroke: var(--color_fondo_encabezado); }
+.boton_cuenta.active .icono_cuenta { stroke: var(--color_texto_encabezado); }
+
+/* --- CONTENEDORES --- */
+main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+section {
+    background-color: var(--color_fondo_tarjeta); padding: 2rem; margin-bottom: 2rem;
+    border-radius: var(--radio_borde_tarjeta); box-shadow: 0 4px 15px var(--color_sombra);
+    transition: background-color 0.3s;
+}
+
+h1, h2, h3 { color: var(--color_texto_principal); margin-bottom: 1rem; line-height: 1.2; }
+h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } h3 { font-size: 1.5rem; }
+p { color: var(--color_texto_secundario); margin-bottom: 1rem; font-size: 1rem; }
+
+/* --- CALCULADORA --- */
+#seleccion_genero { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+#seleccion_genero > div {
+    background-color: var(--color_fondo_input); padding: 1.5rem;
+    border-radius: var(--radio_borde_tarjeta); text-align: center;
+    cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;
+    flex: 1; min-width: 150px;
+}
+#seleccion_genero > div:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); border-color: rgba(0, 0, 0, 0.1); }
+#seleccion_genero > div span { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+#seleccion_genero > div p { font-weight: 700; margin: 0; color: var(--color_texto_principal); }
+#seleccion_genero .selected {
+    background-color: var(--color_fondo_tarjeta); border-color: var(--color_acento);
+    box-shadow: 0 8px 25px rgba(0, 113, 255, 0.2); transform: translateY(-5px);
+}
+#seleccion_genero .selected p { color: var(--color_acento); }
+
+/* Botones de Unidad */
+.contenedor_botones_unidades {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.boton_unidad {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--color_borde_input);
+    background-color: var(--color_fondo_input);
+    color: var(--color_texto_secundario);
+    font-family: var(--fuente_principal);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: var(--radio_borde_pildora);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.boton_unidad:hover {
+    border-color: var(--color_acento);
+    color: var(--color_acento);
+}
+
+.boton_unidad.activo {
+    background-color: var(--color_acento);
+    color: #ffffff; 
+    border-color: var(--color_acento);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 113, 255, 0.3);
+}
+.modo_oscuro .boton_unidad.activo { color: var(--color_fondo); }
+
+#entradas_metricas, #entradas_imperiales { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+#entradas_metricas > div, #entradas_imperiales > div { flex: 1; display: flex; flex-direction: column; min-width: 120px; }
+
+/* Inputs de Texto y Número */
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select.input_select { 
+    width: 100%; 
+    font-family: var(--fuente_principal); 
+    font-size: 1.1rem; 
+    padding: 0.8rem 1rem; 
+    border: 2px solid var(--color_borde_input); 
+    background-color: var(--color_fondo_input); 
+    color: var(--color_texto_principal); 
+    border-radius: 8px; 
+    transition: all 0.2s ease-in-out; 
+}
+
+input:focus, select.input_select:focus { 
+    outline: none; 
+    border-color: var(--color_acento); 
+    background-color: var(--color_fondo_tarjeta); 
+}
+
+.contenedor_boton_calcular { display: flex; justify-content: center; margin-top: 2rem; }
+#boton_calcular {
+    font-family: var(--fuente_principal); font-size: 1.2rem; font-weight: 700;
+    padding: 1rem 2.5rem; border: none; border-radius: var(--radio_borde_pildora);
+    cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
+}
+#boton_calcular:not(:disabled) { background-color: var(--color_acento); color: var(--color_fondo_tarjeta); }
+#boton_calcular:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 113, 255, 0.25); }
+#boton_calcular:disabled { background-color: #e0e0e0 !important; color: #a0a0a0 !important; cursor: not-allowed; }
+/* --- RESULTADOS (VELOCÍMETRO TIPO ARCO) --- */
+.diseno_resultados { display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.columna_resultados { flex: 1; min-width: 300px; }
+
+.contenedor_medidor { display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem; }
+
+/* 1. Contenedor Semicircular */
+.medidor {
+    position: relative;
+    width: 350px;
+    height: 175px;
+    border-radius: 175px 175px 0 0;
+    overflow: hidden;
+    background-color: transparent;
+    margin-bottom: 0;
+}
+
+/* 2. Fondo de Colores */
+/* 2. Fondo de Colores */
+.medidor:before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    
+    /* CAMBIO CLAVE AQUÍ: */
+    background: conic-gradient(
+        from 270deg at 50% 100%,  /* 1. Rotamos para empezar a la IZQUIERDA y centramos ABAJO */
+        
+        /* La suma total de los tramos debe ser 180 grados */
+        #3498db 0deg 45deg,      /* Azul (Bajo peso): Primeros 30 grados */
+        #2ecc71 20deg 90deg,    /* Verde (Normal): De 30 a 100 grados (Área grande) */
+        #f1c40f 90deg 135deg,   /* Amarillo (Sobrepeso): De 100 a 140 grados */
+        #e74c3c 135deg 180deg,   /* Rojo (Obesidad): De 140 a 180 grados (El final) */
+        
+        transparent 180deg       /* El resto es transparente */
+    );
+    z-index: 1;
+}
+
+/* 3. Máscara Central (El hueco blanco) */
+.medidor:after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 220px;
+    height: 110px;
+    background-color: var(--color_fondo_tarjeta); /* Se adapta al tema */
+    border-radius: 110px 110px 0 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3; /* IMPORTANTE: Tapa la base de la aguja */
+}
+
+/* 4. La Aguja */
+.aguja_medidor {
+    position: absolute;
+    width: 4px;
+    height: 170px; 
+    background: var(--color_texto_principal);
+    bottom: 0; 
+    left: 50%;
+    
+    /* Ajuste crítico: transform-origin debe ser exacto */
+    transform-origin: bottom center;
+    
+    /* Añadimos un margen negativo exacto de la mitad del ancho (-2px) para centrarla */
+    margin-left: -2px; 
+    
+    transform: rotate(var(--rotacion_medidor, -90deg));
+    z-index: 2; 
+    transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* 5. El Pivote (El círculo decorativo) */
+.aguja_medidor::after {
+    content: '';
+    position: absolute;
+    /* Ajustamos la posición vertical para que tape bien la unión */
+    bottom: 108px; /* Unos pixeles menos que la máscara (110px) para asegurar que no flote */
+    
+    /* Centrado horizontal */
+    left: 50%;
+    margin-left: -20px; /* Mitad del ancho (40px / 2) */
+    
+    /* Hacemos el pivote un poco más grande para tapar imperfecciones */
+    width: 40px; 
+    height: 20px; 
+    
+    background: var(--color_texto_principal);
+    border-radius: 20px 20px 0 0;
+    z-index: 4;
+}
+
+/* 6. Texto debajo (Subido para encajar en el hueco) */
+.texto_resultado_medidor {
+    text-align: center;
+    margin-top: -90px; 
+    z-index: 11;
+    position: relative;
+    padding-bottom: 2rem;
+}
+.texto_resultado_medidor span { font-size: 2.8rem; font-weight: 800; color: var(--color_texto_principal); display: block; line-height: 1; }
+.texto_resultado_medidor p { font-weight: 700; margin: 0; color: var(--color_texto_secundario); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+/* --- OTROS --- */
+#tabla_resultados { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+#tabla_resultados th, #tabla_resultados td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--color_borde_input); color: var(--color_texto_principal); }
+#tabla_resultados th { background-color: var(--color_fondo_input); font-weight: 700; }
+#tabla_resultados .resaltado { background-color: #d1e7dd; font-weight: bold; border-left: 5px solid #0f5132; }
+.modo_oscuro #tabla_resultados .resaltado { background-color: #27ae60; color: var(--color_fondo_tarjeta); border-left: 5px solid #2ecc71; }
+
+.consejos_dieta { margin-top: 2rem; background-color: var(--color_fondo_input); padding: 1.5rem; border-radius: var(--radio_borde_tarjeta); }
+.consejos_dieta li { padding: 0.5rem 0; color: var(--color_texto_secundario); list-style-position: inside; }
+
+.cuadricula_recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+.tarjeta_recurso { display: flex; flex-direction: column; background-color: var(--color_fondo_tarjeta); border-radius: var(--radio_borde_tarjeta); padding: 2rem; text-decoration: none; color: inherit; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+.tarjeta_recurso:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1); }
+.icono_recurso { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 2rem; background-color: var(--color_fondo_input); margin-bottom: 1rem; }
+.leer_mas { margin-top: 1rem; font-weight: 700; color: var(--color_acento); text-align: right; }
+
+.pestanas_auth { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color_borde_input); }
+.pestanas_auth a { text-decoration: none; padding: 0.5rem 1rem; font-weight: 700; color: var(--color_texto_secundario); border-bottom: 3px solid transparent; }
+.pestanas_auth a.active { color: var(--color_texto_principal); border-bottom-color: var(--color_acento); }
+
+.formulario_auth div { margin-bottom: 1rem; }
+.formulario_auth label { display: block; }
+
+.boton_auth { font-family: var(--fuente_principal); font-size: 1.2rem; font-weight: 700; padding: 1rem 2.5rem; border: none; border-radius: var(--radio_borde_pildora); cursor: pointer; background-color: var(--color_acento); color: var(--color_fondo_tarjeta); transition: all 0.3s ease; width: 100%; margin-top: 1rem; }
+.mensaje_error { color: #e74c3c; font-weight: 700; display: none; }
+
+#historial_nombre_usuario { border-bottom: 2px solid var(--color_borde_input); padding-bottom: 1rem; }
+.diseno_historial { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; }
+.columna_historial { flex: 1; min-width: 300px; overflow-x: auto; }
+.contenedor_grafico { width: 100%; height: 350px; background-color: var(--color_fondo_input); border-radius: var(--radio_borde_tarjeta); padding: 1rem; }
+#boton_cerrar_sesion { background-color: #e74c3c; color: white; border: none; padding: 0.8rem 2rem; border-radius: var(--radio_borde_pildora); font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+
+.notificacion_esquina { display: block; position: fixed; bottom: 20px; right: 20px; width: 90%; max-width: 350px; background-color: var(--color_fondo_tarjeta); padding: 2.5rem 2rem; border-radius: var(--radio_borde_tarjeta); box-shadow: 0 8px 25px var(--color_sombra); z-index: 2000; opacity: 0; transform: translateX(110%); transition: all 0.5s ease; }
+.notificacion_esquina.visible { opacity: 1; transform: translateX(0); }
+.boton_cerrar_notificacion { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--color_texto_secundario); }
+.notificacion_esquina h3 { text-align: center; margin-bottom: 1rem; }
+.notificacion_esquina p { font-size: 1.1rem; text-align: center; color: var(--color_texto_principal); line-height: 1.5; }
+
+section ul { margin-left: 20px; margin-bottom: 1rem; }
+section li { margin-bottom: 0.5rem; }
+.contenedor_guardar_resultado { margin-top: 2rem; padding: 1.5rem; border-top: 1px solid var(--color_borde_input); text-align: center; }
+.checkbox_personalizado { margin-top: 1rem; display: flex; justify-content: center; align-items: center; }
+.checkbox_personalizado input { display: none; }
+.checkbox_personalizado label { cursor: pointer; padding-left: 30px; position: relative; font-size: 0.9rem; color: var(--color_texto_secundario); }
+.checkbox_personalizado label:before { content: ''; position: absolute; left: 0; top: 0; width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 4px; background: var(--color_fondo_tarjeta); }
+.checkbox_personalizado input:checked + label:after { content: '✔'; position: absolute; left: 4px; top: 1px; color: var(--color_acento); font-size: 1.2rem; }
+.boton_guardar { background-color: #2ecc71; color: white; padding: 0.8rem 2rem; border: none; border-radius: var(--radio_borde_pildora); font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+.boton_guardar:hover { background-color: #27ae60; transform: scale(1.05); }

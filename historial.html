@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Historial | Calculadora de IMC</title>
+
+    <!-- Script y CSS comunes -->
+    <script src="JS_IMS.js" defer></script>
+    <link rel="stylesheet" href="CSS_IMS.css">
+    
+    <!-- Chart.js: Librería para el gráfico de progreso -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<header class="encabezado">
+    <nav>
+        <ul class="enlaces_nav">
+            <li><a href="index.html#calculadora_seccion">Calculadora</a></li>
+            <li><a href="index.html#recursos_seccion">Recursos</a></li>
+        </ul>
+    </nav>
+    <div class="acciones_encabezado">
+        <button id="interruptor_tema" title="Cambiar tema">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+        </button>
+        <!-- Enlace activo 'Mi Historial' -->
+        <a href="historial.html" id="enlace_cuenta" class="boton_cuenta active">
+            <svg class="icono_cuenta" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Mi Historial</span>
+        </a>
+    </div>
+</header>
+
+<main>
+    <section id="seccion_historial">
+        <a href="index.html" class="boton_volver">&larr; Volver a la calculadora</a>
+
+        <h2>Mi Historial</h2>
+        <h3 id="historial_nombre_usuario">Hola, ...</h3>
+
+        <div class="diseno_historial">
+            <!-- Columna 1: Tabla de Datos (JS la rellena con localStorage) -->
+            <div class="columna_historial">
+                <table id="tabla_historial">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Peso (kg)</th>
+                            <th>Altura (cm)</th>
+                            <th>IMC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo_tabla_historial">
+                        <!-- Se llena dinámicamente o muestra mensaje vacío -->
+                        <tr>
+                            <td colspan="4">No hay registros guardados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Columna 2: Gráfico de Progreso -->
+            <div class="columna_historial">
+                <div class="contenedor_grafico">
+                    <!-- Canvas donde Chart.js dibujará el gráfico -->
+                    <canvas id="grafico_historial"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para cerrar sesión (borra sessionStorage) -->
+        <div class="contenedor_boton_salir">
+            <button id="boton_cerrar_sesion">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Salir de la cuenta</span>
+            </button>
+        </div>
+
+    </section>
+</main>
+
+<footer>
+    <div>
+        <p>Proyecto Interacción Humano-Computadora. Calculadora IMC</p>
+    </div>
+</footer>
+
+<!-- NOTIFICACIÓN ESQUINA: Se muestra con JS al cargar la página -->
+<div id="notificacion_motivacional" class="notificacion_esquina">
+    <button id="boton_cerrar_notificacion" class="boton_cerrar_notificacion">&times;</button>
+    <h3>Mensaje motivacional del día</h3>
+    <p id="texto_mensaje_motivacional">
+        Cargando mensaje...
+    </p>
+</div>
+
+</body>
+</html>
