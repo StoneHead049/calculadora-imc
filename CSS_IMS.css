@@ -355,6 +355,38 @@ input:focus, select.input_select:focus {
     font-weight: 800;
 }
 
+/* ==========================================================================
+   MEJORA ESTÉTICA: BOTÓN VOLVER
+   ========================================================================== */
+
+.boton_volver {
+    display: inline-flex;       /* Alinea la flecha y el texto perfectamente */
+    align-items: center;        /* Centra verticalmente */
+    gap: 0.5rem;                /* Espacio entre la flecha y el texto */
+    
+    font-family: var(--fuente_principal);
+    font-weight: 700;           /* Texto en negrita */
+    font-size: 1rem;
+    text-decoration: none;      /* Quita el subrayado por defecto */
+    
+    color: var(--color_acento); /* Usa tu azul (#0071ff) */
+    
+    padding: 0.5rem 0;          /* Un poco de aire arriba y abajo */
+    margin-bottom: 1rem;        /* Separación con el título */
+    transition: all 0.3s ease;  /* Suaviza el cambio de color y movimiento */
+}
+
+/* Efecto al pasar el mouse (Hover) */
+.boton_volver:hover {
+    color: var(--color_acento_hover); /* Cambia a tu amarillo/naranja al pasar el mouse */
+    transform: translateX(-5px);      /* Mueve todo el botón un poco a la izquierda */
+}
+
+/* Aseguramos que la flecha (entidad HTML &larr;) se vea bien */
+.boton_volver::before {
+    content: ''; /* Por si quisieras agregar un icono por CSS, pero ya tienes la flecha en HTML */
+}
+
 .texto_resultado_medidor span { font-size: 2.8rem; font-weight: 800; color: var(--color_texto_principal); display: block; line-height: 1; }
 .texto_resultado_medidor p { font-weight: 700; margin: 0; color: var(--color_texto_secundario); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
 /* --- OTROS --- */
