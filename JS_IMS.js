@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PROYECTO CALCULADORA DE IMC - LÓGICA COMPLETA CON LOCALSTORAGE
+   PROYECTO CALCULADORA DE IMC - LÓGICA (SIN GÉNERO)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,74 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const lb_input = document.getElementById('lb');
         
         const valor_imc_display = document.getElementById('valor_imc');
-        const opciones_genero = document.querySelectorAll('#seleccion_genero div');
         const seccion_resultados = document.getElementById('seccion_resultados');
         const boton_guardar_resultado = document.getElementById('boton_guardar_resultado');
         const checkbox_guardar_siempre = document.getElementById('guardar_siempre');
-        const texto_cambiar_genero = document.getElementById('texto_cambiar_genero_defecto');
 
-        let genero_seleccionado = null;
         let es_imperial = false;
-
-        // --- CARGAR GÉNERO POR DEFECTO ---
-        // Intentamos cargar primero la preferencia general del navegador
-        let genero_guardado = localStorage.getItem('genero_defecto');
-
-        // Si el usuario está logueado, intentamos obtener su género específico de su cuenta
-        if (usuario_logueado) {
-             const usuarios = JSON.parse(localStorage.getItem('usuarios_imc')) || {};
-             const usuario = usuarios[usuario_logueado.email];
-             if (usuario && usuario.genero) {
-                 genero_guardado = usuario.genero; // Prioridad al género de la cuenta
-             }
-        }
-
-        if (genero_guardado) {
-            opciones_genero.forEach(opcion => {
-                if (opcion.getAttribute('data-genero') === genero_guardado) {
-                    opcion.classList.add('selected');
-                    genero_seleccionado = genero_guardado;
-                }
-            });
-            
-            // CORRECCIÓN: Mostrar SIEMPRE si hay un género guardado, sin importar el login
-            if (texto_cambiar_genero) {
-                texto_cambiar_genero.style.display = 'block';
-            }
-        }
-
-        if (texto_cambiar_genero) {
-            texto_cambiar_genero.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Borramos la preferencia general
-                localStorage.removeItem('genero_defecto');
-                
-                // Opcional: Si quisieras borrar también la preferencia de la cuenta del usuario logueado, 
-                // necesitarías actualizar el objeto 'usuarios_imc' en localStorage. 
-                // Por ahora, solo borramos la preferencia local del navegador para simplificar.
-
-                alert("Se ha restablecido tu preferencia de género.");
-                location.reload();
-            });
-        }
-
-        // Selección de Género
-        opciones_genero.forEach(opcion => {
-            opcion.addEventListener('click', () => {
-                opciones_genero.forEach(opt => opt.classList.remove('selected'));
-                opcion.classList.add('selected');
-                genero_seleccionado = opcion.getAttribute('data-genero');
-                
-                // Guardar preferencia general siempre
-                localStorage.setItem('genero_defecto', genero_seleccionado);
-                
-                // CORRECCIÓN: Mostrar el enlace inmediatamente al seleccionar
-                if (texto_cambiar_genero) {
-                     texto_cambiar_genero.style.display = 'block';
-                }
-                validar_entradas();
-            });
-        });
 
         // Cambio de Unidades
         const cambiar_unidad = (imperial) => {
@@ -147,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn_imperial.addEventListener('click', () => cambiar_unidad(true));
         }
 
-        // Validación
+        // Validación (YA NO PIDE GÉNERO)
         const todos_los_inputs = [cm_input, kg_input, ft_input, in_input, lb_input];
         todos_los_inputs.forEach(input => {
             if (input) input.addEventListener('input', validar_entradas);
@@ -160,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { 
                 son_entradas_validas = (cm_input.value > 0 && kg_input.value > 0);
             }
-            boton_calcular.disabled = !(son_entradas_validas && genero_seleccionado);
+            // MODIFICADO: Solo valida números, ignora el género
+            boton_calcular.disabled = !son_entradas_validas;
+            
             if (!boton_calcular.disabled) {
                 mensaje_error.textContent = '';
                 mensaje_error.style.display = 'none';
@@ -193,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (seccion_resultados) {
                 seccion_resultados.scrollIntoView({ behavior: 'smooth' });
             }
-            if (checkbox_guardar_siempre.checked && usuario_logueado) {
+            if (checkbox_guardar_siempre && checkbox_guardar_siempre.checked && usuario_logueado) {
                 guardar_resultado_actual();
             }
         });
@@ -217,8 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fecha: new Date().toLocaleDateString('es-ES'),
                 peso: peso_kg.toFixed(1),
                 altura: altura_cm.toFixed(0),
-                imc: imc.toFixed(1),
-                genero: genero_seleccionado
+                imc: imc.toFixed(1)
             };
             historial_usuario.push(nuevo_registro);
             historial[usuario_logueado.email] = historial_usuario;
@@ -232,55 +170,36 @@ document.addEventListener('DOMContentLoaded', () => {
             valor_imc_display.textContent = `Tu IMC es: ${imc_formateado}`;
             resaltar_fila_resultado(imc);
             actualizar_medidor(imc, imc_formateado);
-            mostrar_consejos_dieta(imc, genero_seleccionado);
+            mostrar_consejos_dieta(imc);
         }
 
         function actualizar_medidor(imc, imc_formateado) {
             const aguja_medidor = document.querySelector('.aguja_medidor');
             const texto_resultado_medidor = document.getElementById('texto_resultado_medidor');
             
-            let rotacion = -90; // Posición inicial (izquierda total)
-
-            // LÓGICA DE ROTACIÓN POR SEGMENTOS
-            // Math.max(0, ...) evita que se vaya hacia atrás
-            // Math.min(1, ...) evita que se pase del tope de su color
+            let rotacion = -90; 
             
             if (imc < 18.5) {
-                // SECCIÓN 1: BAJO PESO (AZUL)
-                const base = 15;
-                const rango = 18.5 - 15;
+                const base = 15; const rango = 3.5;
                 const progreso = Math.max(0, Math.min(1, (imc - base) / rango));
                 rotacion = -90 + (progreso * 45);
-
-            } else if (imc >= 18.5 && imc < 25) {
-                // SECCIÓN 2: PESO NORMAL (VERDE)
-                const base = 18.5;
-                const rango = 25 - 18.5;
+            } else if (imc < 25) {
+                const base = 18.5; const rango = 6.5;
                 const progreso = Math.max(0, Math.min(1, (imc - base) / rango));
                 rotacion = -45 + (progreso * 45);
-
-            } else if (imc >= 25 && imc < 30) {
-                // SECCIÓN 3: SOBREPESO (AMARILLO)
-                const base = 25;
-                const rango = 30 - 25;
+            } else if (imc < 30) {
+                const base = 25; const rango = 5;
                 const progreso = Math.max(0, Math.min(1, (imc - base) / rango));
                 rotacion = 0 + (progreso * 45);
-
             } else {
-    const base = 30;
-    const imc_max_visual = 40;  // IMC máximo mostrado en el velocímetro
-    const imc_limitado = Math.min(imc, imc_max_visual); // importante
+                const base = 30; const imc_max_visual = 40;
+                const imc_limitado = Math.min(imc, imc_max_visual);
+                const rango = 10;
+                const progreso = (imc_limitado - base) / rango;
+                rotacion = 45 + (progreso * 45);
+            }
 
-    const rango = imc_max_visual - base;
-    const progreso = (imc_limitado - base) / rango;
-
-    rotacion = 45 + (progreso * 45);
-}
-
-            
-            // SEGURIDAD FINAL: Asegurar que nunca se salga del semicírculo (-90 a 90)
             rotacion = Math.max(-90, Math.min(90, rotacion));
-
             aguja_medidor.style.setProperty('--rotacion_medidor', `${rotacion}deg`);
             texto_resultado_medidor.querySelector('span').textContent = imc_formateado;
             
@@ -293,27 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
             texto_resultado_medidor.querySelector('p').textContent = clasificacion;
         }
 
-        function mostrar_consejos_dieta(imc, genero) {
+        // MODIFICADO: Consejos generales (sin distinción de sexo)
+        function mostrar_consejos_dieta(imc) {
             const lista_consejos = document.getElementById('lista_consejos_dieta');
             lista_consejos.innerHTML = '';
             let consejos = [];
 
             if (imc < 18.5) { 
-                if (genero === 'masculino') consejos = ["Entrenamiento fuerza.", "Aumenta calorías.", "Comidas frecuentes.", "Consume grasas saludables.", "Consulta médico."];
-                else if (genero === 'femenino') consejos = ["Consume hierro.", "Snacks nutritivos.", "No saltes comidas.", "Fortalece huesos.", "Apoyo profesional."];
-                else consejos = ["Aumenta proteínas.", "Consulta profesional.", "Duerme bien.", "Ejercicios fuerza.", "Snacks saludables."];
+                consejos = ["Aumenta consumo de proteínas y carbos.", "Realiza ejercicios de fuerza.", "Haz 5-6 comidas al día.", "Incluye grasas saludables (aguacate, nueces).", "Consulta a un nutricionista."];
             } else if (imc < 25) {
-                if (genero === 'masculino') consejos = ["Mantén rutina fuerza.", "Hidrátate bien.", "Limita alcohol.", "Proteínas post-entreno.", "Chequeos anuales."];
-                else if (genero === 'femenino') consejos = ["Dieta rica fibra.", "Cardio y fuerza.", "Cuida calcio.", "Gestiona estrés.", "Sueño regular."];
-                else consejos = ["Mantén dieta.", "Sigue ejercicio.", "Gestiona estrés.", "Hidrátate bien.", "Duerme 7-8 horas."];
+                consejos = ["Mantén una dieta equilibrada.", "Hidrátate constantemente.", "Realiza 30 min de actividad física diaria.", "Prioriza alimentos integrales.", "Duerme entre 7 y 8 horas."];
             } else if (imc < 30) {
-                if (genero === 'masculino') consejos = ["Reduce carbohidratos.", "Más cardio.", "Evita azúcares.", "Prioriza proteínas.", "Busca compañero entreno."];
-                else if (genero === 'femenino') consejos = ["Controla antojos.", "Más vegetales.", "Caminatas diarias.", "Evita comer tarde.", "Fruta por postre."];
-                else consejos = ["Controla porciones.", "Camina 30 min.", "Reduce azúcar.", "Bebe agua antes.", "Más vegetales."];
+                consejos = ["Controla las porciones.", "Reduce azúcares y harinas refinadas.", "Aumenta consumo de vegetales y fibra.", "Bebe agua antes de las comidas.", "Camina al menos 45 min diarios."];
             } else {
-                if (genero === 'masculino') consejos = ["Consulta médico.", "Ejercicios bajo impacto.", "Elimina gaseosas.", "Diario alimentos.", "Salud cardiovascular."];
-                else if (genero === 'femenino') consejos = ["Apoyo nutricional.", "Ejercicios agua.", "Alimentos integrales.", "Metas pequeñas.", "Grupos apoyo."];
-                else consejos = ["Prioriza integrales.", "Consulta profesional.", "Apoyo familiar.", "Empieza caminando.", "Evita ultraprocesados."];
+                consejos = ["Prioriza alimentos no procesados.", "Busca apoyo profesional médico/nutricional.", "Comienza con ejercicios de bajo impacto.", "Establece metas pequeñas y realistas.", "Evita bebidas azucaradas."];
             }
 
             consejos.forEach(tip => {
@@ -333,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 4. SISTEMA DE AUTENTICACIÓN ---
+    // --- 4. SISTEMA DE AUTENTICACIÓN (MODIFICADO SIN GÉNERO) ---
     const formulario_registro = document.getElementById('formulario_registro');
     if (formulario_registro) {
         formulario_registro.addEventListener('submit', (e) => {
@@ -342,8 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('registro_email').value;
             const password = document.getElementById('registro_password').value;
             const password_confirm = document.getElementById('registro_password_confirm').value;
-            const genero_input = document.getElementById('registro_genero');
-            const genero_seleccionado = genero_input ? genero_input.value : 'otro';
             const mensaje_error = document.getElementById('mensaje_error_registro');
 
             if (password !== password_confirm) {
@@ -357,13 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 mensaje_error.style.display = 'block';
                 return;
             }
-            // GUARDAR GÉNERO EN EL REGISTRO
-            usuarios[email] = { nombre: nombre_usuario, password: password, genero: genero_seleccionado };
+            // YA NO GUARDAMOS GÉNERO
+            usuarios[email] = { nombre: nombre_usuario, password: password };
             localStorage.setItem('usuarios_imc', JSON.stringify(usuarios));
             
-            // Guardar también como preferencia general
-            localStorage.setItem('genero_defecto', genero_seleccionado);
-
             alert('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
             window.location.href = 'inicio_de_sesion.html';
         });
@@ -385,12 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             sessionStorage.setItem('usuario_logueado', JSON.stringify({ email: email, nombre: usuario.nombre }));
-            
-            // Establecer género por defecto al iniciar sesión
-            if (usuario.genero) {
-                localStorage.setItem('genero_defecto', usuario.genero);
-            }
-
             window.location.href = 'historial.html';
         });
     }
@@ -457,9 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 6. NOTIFICACIÓN (CORREGIDA: SIEMPRE VISIBLE) ---
+    // --- 6. NOTIFICACIÓN ---
     const notificacion = document.getElementById('notificacion_motivacional');
-    if (notificacion) { // Eliminada la condición usuario_logueado
+    if (notificacion) { 
         const boton_cerrar_notificacion = document.getElementById('boton_cerrar_notificacion');
         const texto_mensaje = document.getElementById('texto_mensaje_motivacional');
         const mensajes = [
